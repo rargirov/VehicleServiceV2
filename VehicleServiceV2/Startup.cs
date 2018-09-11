@@ -9,17 +9,24 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using DbRepository;
+using DbRepository.Interfaces;
+using DbRepository.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Blueprints.DbModels;
 
 namespace VehicleServiceV2
 {
     public class Startup
     {
+        private IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        //public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -33,6 +40,10 @@ namespace VehicleServiceV2
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddDbContext<Models.DB.VehicleServiceVDb2>(dbContextOptionBuilder =>
+                dbContextOptionBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<IVehicleServiceDb, Models.DB.VehicleServiceVDb2>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

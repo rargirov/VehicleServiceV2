@@ -1,0 +1,14 @@
+﻿@model IEnumerable<Blueprints.DbModels.Color>
+@{
+    ViewBag.Title = "Colors";
+}
+
+<h2>@Html.DisplayNameFor(model => model.Name) (@Model.Count())</h2>
+
+@if (Model.Any())
+{
+    foreach (var entity in Model)
+    {
+        <p>@Html.ActionLink(entity.Name, "Edit", new { id = entity.Id })</p>
+    }
+}
